@@ -1,0 +1,65 @@
+# Global Rules and Project Requirements
+
+##### Important Notes #####
+0. I AM NOT MAKING AN APP OR WEBSITE 
+1. No additional files or notebooks allowed beyond the 4 specified files(dataset.py , dataste_visuals.py - to pick a random episode and show the user trajectory in 100 frames , ddpg_train.py for training the model and then save the trained info weights , ddpg_test_visuals.py for picking a random episode out of the 100 to give the necessary graphs for )
+2. ALWAYS ANALYZE BEFORE YOU EDIT ANYTHING , ANALYZE THE ENTIRE CODEBASE BEFORE EDITTING
+3. REFER TO THE PAPERS FOR THE FORMULATIONS AND DETAILS OF THE CODE AND THE DATASET , ALWAYS WRITE A COMMENT BEFORE THE CODE SNIPPET AS TO WHY YOU WROTE THIS CODE AND WHAT YOU REFERED TO WRITE THIS PIECE OF CODE , THIS WILL MAKE YOU NO HALUCINATE AND ALWAYS HAVE A BASIS AS TO WHY YOU DO WHAT YOU DO. 
+
+## Dataset Requirements
+1. Generate synthetic dataset with:
+   - 100 episodes
+   - 100 frames per episode
+   - Fixed components in all episodes:
+     * 1 IRS plane with 8 IRS elements (fixed location)
+     * 1 Access Point (fixed location)
+     * 1 Rectangular obstacle (fixed location, size and  height)
+   - Variable components:
+     * 1 Moving user with different trajectories per episode
+   Note: 
+   *MAKE MOST EPISODE WITH THE NOTION THAT THE USER IS BLOCKED BY THE BUILDING AND SO THE SINR FROM THE ANTENNA IS LOWER COMAPRED TO THE IRS SINR . MAKE THE SINR USAGE AROUND 40% to 90% for each episode*
+
+## Directory Structure
+1. Source Code    
+- Python Files:
+     * generate_dataset.py
+     * visualize_dataset.py
+     * train_ddpg.py
+     * visualize_ddpg.py
+   
+   
+## Implementation Requirements
+1. Dataset Generator:
+   - Based on dataset_features.txt
+   - Generate 1000 episodes with specified components
+   - A big building usually blocking Direct Line of Sight of the Antenna.
+   - User moves like a normal human on the ground (Sometimes in LOS of the Antenna , Sometimes in no LOS of the Antenna but LOS with the IRS , Sometimes not LOS with both in which case best SINR is chosen)
+   - Make most episodes with the agenda that the SINR from Antenna should be lower compared to SINR from the IRS , Achieve this by either making distance between user and Ap larger or by make the user move where the obstacle is blocking direct LOS of the user from the Antenna , just make this a higher probability of occurrence as in real life obviously some user may be nearer to the antenna compared to the IRS )  
+
+
+2. Dataset Visualizer:
+   - 3D visualization of episodes
+   - Show user movement, IRS panel, base station, obstacle
+   - Dotted lines showing signal path (IRS or direct)
+   - I want the visualization to be a fig with 100 frames as the user moves 
+
+3. DDPG Trainer:
+   - Train for 100 episodes
+      - Objectives:
+     * Maximize main lobe and steer to user location
+     * Minimize side lobes
+     * Optimize user SINR
+     * Use IRS path only when SINR is higher than direct path
+
+4. DDPG Visualizer:
+   Required visualizations:
+   a) Side-by-side animation:
+      - 3D movement with components and signal paths
+      - Polar plot of main lobe tracking
+   b) SINR vs BER with multiple modulation techniques
+   c) User distance vs SINR comparison (IRS vs direct path)
+   d) Phase shift graph showing main lobe steering
+   e) IRS elements vs SINR relationship study
+   f) Phase shift vs Time 
+
+

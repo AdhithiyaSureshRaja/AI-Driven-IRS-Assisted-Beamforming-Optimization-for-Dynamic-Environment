@@ -1,0 +1,76 @@
+Essential Columns for Synthetic IRS Dataset (SISO, Rayleigh Fading)
+
+# Synthetic IRS Dataset Features (SISO, Rayleigh Fading)
+
+**Note:**
+- The dataset now consists of 100 separate CSV files (episode_000.csv, ..., episode_099.csv), each representing a unique user trajectory (episode) with 100 time steps.
+- Each file contains the following columns. The `trajectory_id` column has been removed (each file is a unique trajectory).
+- For this dataset, N = 8 (number of IRS elements).
+- **Obstacle Emulation:** To better reflect real-world scenarios, additional columns are included to represent obstacles between the user and base station. These columns allow for simulating the presence, position, and size of obstacles that justify IRS usage.
+- For simplicity let us assume a circular trajectory not particularly around anything but simply so that it would be easier to predict.
+
+| Column Name        | Description                                                       |
+|--------------------|-------------------------------------------------------------------|
+| realization_id     | Unique index for each time step within the episode                |
+| tx_rx_distance     | Distance between Tx and Rx (meters)                               |
+| tx_irs_distance    | Distance between Tx and IRS (meters)                              |
+| irs_rx_distance    | Distance between IRS and Rx (meters)                              |
+| H_direct           | Complex direct channel coefficient (Tx→Rx)                        |
+| H_tx_irs_1 ... N   | Complex channel from Tx to each IRS element (N=8 columns)         |
+| H_irs_rx_1 ... N   | Complex channel from each IRS element to Rx (N=8 columns)         |
+| irs_phase_1 ... N  | Phase shift applied to each IRS element (N=8 columns, radians)    |
+| effective_channel  | Combined effective channel coefficient (after IRS phase shifts)   |
+| snr_db             | Resulting SNR at Rx (in dB)                                       |
+| received_power_dbm | Received signal power at Rx (in dBm)                              |
+| irs_strategy       | Label for IRS phase strategy (e.g., 'random', 'optimal', 'drl')   |
+| noise_power_dbm    | Noise power used for SNR calculation                              |
+| tx_power_dbm       | Transmit power used for each realization                          |
+| user_position      | User's (x, y, z) coordinates at each time step (tuple)            |
+| user_velocity      | User's (vx, vy, vz) velocity vector at each time step (tuple)     |
+| time_index         | Time step or frame index (for mobility/trajectory simulation)     |
+| obstacle_present   | 1 if there is an obstacle between Tx and Rx, else 0               |
+| obstacle_x         | X-coordinate of obstacle center (meters)                          |
+| obstacle_y         | Y-coordinate of obstacle center (meters)                          |
+| obstacle_z         | Z-coordinate of obstacle center (meters)                          |
+| obstacle_width     | Width of obstacle (meters)                                        |
+| obstacle_height    | Height of obstacle (meters)                                       |
+| obstacle_depth     | Depth of obstacle (meters)                                        |
+
+**Justification for Including Obstacle Features:**
+
+The inclusion of obstacle-related features is motivated by the fundamental role of IRS in overcoming blockages in wireless communication environments. Obstacles such as buildings, walls, and other objects can block the line-of-sight (LoS) path between the transmitter (base station) and receiver (user), severely degrading the received signal quality. IRS is specifically proposed to mitigate such issues by providing alternative, reconfigurable reflection paths.
+
+References:
+- Wu, Q., & Zhang, R. (2019). "Towards Smart and Reconfigurable Environment: Intelligent Reflecting Surface Aided Wireless Network." IEEE Communications Magazine, 57(5), 106-112. _"...The IRS is particularly useful in scenarios where the direct link between the BS and user is blocked by obstacles (e.g., buildings, walls), as it can establish a virtual LoS path via reflection..."_ (Section II, "Why IRS?")
+- Wu, Q., & Zhang, R. (2021). "Intelligent Reflecting Surface Enhanced Wireless Network via Joint Active and Passive Beamforming." IEEE Transactions on Wireless Communications, 18(11), 5394-5409. _"...IRS is especially beneficial in non-line-of-sight (NLoS) conditions caused by obstacles, enabling robust communication by smartly reflecting signals..."_ (Section I, Introduction)
+
+**Each CSV file = one episode (trajectory) of 100 time steps.**
+
+
+Justification (with Local File References):
+- realization_id, noise_power_dbm, tx_power_dbm: DRL Robust BF.pdf (Page 8)
+- tx_rx_distance, tx_irs_distance, irs_rx_distance: IRS via Active Passive BF.pdf (Page 5)
+- H_direct, H_tx_irs, H_irs_rx: IRS via Active Passive BF.pdf (Page 7)
+- irs_phase_shifts, effective_channel: IRS_TUTORIAL.pdf (Sec. III-B, Page 10)
+- snr_db, received_power_dbm: Smart ENV IRS.pdf (Fig. 4, Page 12)
+- irs_strategy: DRL Robust BF.pdf (Sec. IV, Page 9)
+- user_position, user_velocity, time_index: IRS_TUTORIAL.pdf (Sec. IV, Page 15)
+- trajectory_id: DRL Robust BF.pdf (User mobility scenario, Page 10)
+
+Local File Name → Full Citation Mapping:
+- DRL Robust BF.pdf → Lin, J., Zou, Y., Dong, X., Gong, S., Hoang, D. T., & Niyato, D. "Deep Reinforcement Learning for Robust Beamforming in IRS-assisted Wireless Communications," GLOBECOM 2020.
+- IRS via Active Passive BF.pdf → Wu, Q., & Zhang, R. "Intelligent Reflecting Surface Enhanced Wireless Network via Joint Active and Passive Beamforming," IEEE TWC, 2019.
+- IRS_TUTORIAL.pdf → Wu, Q., Zhang, S., Zheng, B., You, C., & Zhang, R. "Intelligent Reflecting Surface-Aided Wireless Communications: A Tutorial," IEEE TCOM, 2021.
+- Smart ENV IRS.pdf → Wu, Q., & Zhang, R. "Towards Smart and Reconfigurable Environment: Intelligent Reflecting Surface Aided Wireless Network," IEEE Communications Magazine, 2019.
+
+
+Justification (with Paper References):
+- Channel coefficients (H_direct, H_tx_irs, H_irs_rx): Wu & Zhang, 2019, Eq. (1)-(3), Section II; Wu et al., 2019, Section II; Wu & Zhang, 2021, Section II; Lin et al., 2020, Section II.
+- Phase shifts and effective channel: Wu & Zhang, 2019, Eq. (4)-(6), Section II-III; Wu et al., 2019, Section II-III; Wu & Zhang, 2021, Section II-III; Lin et al., 2020, Section II, III.
+- SNR, received power: Wu & Zhang, 2019, Section IV (Simulation), Fig. 4; Wu et al., 2019, Section IV; Wu & Zhang, 2021, Section IV; Lin et al., 2020, Section IV.
+- IRS strategy (random/optimal/DRL): Lin et al., 2020, Section III-IV; Wu & Zhang, 2019, Section IV; Wu et al., 2019, Section IV; Wu & Zhang 2021, Section IV.
+- Distances: Standard in DeepMIMO and all geometric IRS models.
+- Multiple realizations: Needed for statistical averaging (Lin et al., 2020, Section IV).
+
+Example Table (for N=8 IRS elements, 5 realizations , 1 episode): 
+
